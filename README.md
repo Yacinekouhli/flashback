@@ -1,8 +1,8 @@
 # 🎉 Flashback App
 
-Flashback est une application virale qui permet aux utilisateurs de générer des images amusantes combinant leur selfie à une photo iconique grâce à l'intelligence artificielle.
+Flashback is a viral app that allows users to generate fun images by combining their selfie with an iconic photo using text-to-image stable model.
 
-## 📂 Structure du projet
+## 📂 Project structure
 
 ```plaintext
 flashback/
