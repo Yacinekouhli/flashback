@@ -37,6 +37,13 @@ async def get_iconic_images():
     return {"iconic_images": os.listdir(iconic_dir)}
 
 
+@app.get("/iconic/{image_name}")
+async def get_iconic_image(image_name: str):
+    file_path = f"app/static/iconic/{image_name}"
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Image not found")
+    return FileResponse(file_path)
+
 @app.post("/generate_flashback")
 async def generate_flashback(request: GenerateRequest):
     selfie_path = f"app/static/selfies/{request.selfie_filename}"

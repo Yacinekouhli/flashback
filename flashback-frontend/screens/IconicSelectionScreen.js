@@ -1,5 +1,6 @@
+// screens/IconicSelectionScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, Button, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
 import { api } from '../services/api';
 
 export default function IconicSelectionScreen({ navigation }) {
@@ -15,52 +16,64 @@ export default function IconicSelectionScreen({ navigation }) {
     try {
       setLoading(true);
       const response = await api.get('/images/iconic');
-      // Selon ton backend, c'est { "iconic_images": ["abbey_road.jpg", ...] }
+      // Ex: { "iconic_images": ["mona_lisa.jpg", "abbey_road.png", ...] }
       setIconicImages(response.data.iconic_images);
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleSelectIconic = (iconic) => {
-    setSelectedIconic(iconic);
+  const handleSelectIconic = (filename) => {
+    setSelectedIconic(filename);
   };
 
-  // Quand on clique sur "Continuer", on passe l'image iconique sélectionnée
-  // à l'écran d'upload (ou directement à l'écran de génération, selon ton flow)
   const goToUpload = () => {
     if (!selectedIconic) return;
-    // On passe la valeur via les params de navigation
+    // Passe le nom de fichier iconique à l'écran d'upload
     navigation.navigate('Upload', { iconicFilename: selectedIconic });
   };
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );
   }
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 20, marginBottom: 10 }}>Choisis une image iconique :</Text>
-      
-      {iconicImages.map((item) => (
-        <TouchableOpacity
-          key={item}
-          onPress={() => handleSelectIconic(item)}
-          style={{
-            padding: 10,
-            marginVertical: 5,
-            backgroundColor: item === selectedIconic ? '#ccc' : '#eee',
-          }}
-        >
-          <Text>{item}</Text>
-        </TouchableOpacity>
-      ))}
+    <View style={{ flex:1, padding:20 }}>
+      <Text style={{ fontSize: 20, marginBottom: 10 }}>
+        Sélectionnez une image iconique :
+      </Text>
+
+      {iconicImages.map((item) => {
+        // Construire l'URL pour accéder à l'image 
+        // (adapte "localhost" selon ton environnement : 10.0.2.2 pour l'émulateur Android, etc.)
+        const imageUrl = `http://localhost:8000/iconic/${item}`;
+
+        return (
+          <TouchableOpacity
+            key={item}
+            onPress={() => handleSelectIconic(item)}
+            style={{
+              backgroundColor: item === selectedIconic ? '#ddd' : '#eee',
+              marginVertical: 5,
+              padding: 10,
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <Image
+              source={{ uri: imageUrl }}
+              style={{ width: 50, height: 50, marginRight: 10 }}
+            />
+            <Text>{item}</Text>
+          </TouchableOpacity>
+        );
+      })}
 
       <Button
         title="Continuer"
